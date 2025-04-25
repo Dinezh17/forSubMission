@@ -1,0 +1,150 @@
+
+# need to change the dummy values also need to alter it so that it wont show that job reporting and all - half done
+
+
+# button style in stats - done
+
+
+# verify how lambda 
+
+
+# make batch table for evaluation batch report
+
+
+# ROLE ASSIGN MAKE CHECK BEFORE CHANGING SCORE IN COMPETENCY
+
+# in evaluation batch order by the batch id reverse and add search option for reporting employee search
+
+# make the comp level change per job level on update of competency
+# @app.post("/employees")
+# def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db)):
+#     employee_number = employee.employee_number.strip()
+#     name = employee.name.strip()
+
+#     # Optional: lowercase the employee_number for uniformity
+#     # employee_number = employee_number.lower()
+
+#     new_emp = Employee(
+#         employee_number=employee_number,
+#         name=name
+#     )
+#     db.add(new_emp)
+#     db.commit()
+#     db.refresh(new_emp)
+#     return new_emp
+#
+
+
+
+#check bellow for validating data for anamolies 
+
+
+#  from io import BytesIO
+# import re
+# from typing import List
+# import pandas as pd
+# from pprint import pprint
+
+
+
+# def printemp(csv_content):
+#     words = []
+#     current_employee = {
+#         "EmployeeNumber": "",
+#         "EmployeeName": "",
+        
+#     }
+#     in_competencies = False
+#     rpl_apl_count = 0
+    
+#     for line in csv_content:
+#         line = line.strip()
+#         if not line:
+#             continue
+        
+#         raw_parts = line.split(',')
+#         line_words = []
+        
+#         for part in raw_parts:
+#             stripped_word = part.strip()
+#             if stripped_word:
+#                 line_words.append(stripped_word)
+        
+#         words.extend(line_words)
+
+#     i = 0
+#     while i < len(words):
+#         word = words[i]  
+
+#         if not in_competencies:
+#             if word == "Employee Number" and i+1 < len(words):
+#                 current_employee["EmployeeNumber"] = words[i+1]
+#                 i += 2
+#             elif word == "Employee Name" and i+1 < len(words):
+#                 current_employee["EmployeeName"] = words[i+1]
+#                 i += 2
+           
+#             else:
+#                 i += 1
+
+
+#     invalid_values = {"", "position code", "employee name"}
+#     for key, value in current_employee.items():
+#         if value.strip().lower() in invalid_values:
+#             current_employee[key] = "Not provided"         
+#     return current_employee          
+
+# def process_sheet(df):
+#     csv_content=[]
+#     for row in df.values:
+#             if any("managing points" in str(cell).strip().lower() for cell in row if pd.notna(cell)):
+#                 return csv_content
+                 
+#             clean_row = [str(cell).strip().replace(',', '/') if pd.notna(cell) else "" for cell in row]
+            
+#             cleaned = []
+#             prev_empty = False
+#             for cell in clean_row:
+#                 if cell == "":
+#                     if not prev_empty:
+#                         cleaned.append(cell)
+#                     prev_empty = True
+#                 else:
+#                     cleaned.append(cell)
+#                     prev_empty = False
+            
+#             csv_line = ",".join([cell for cell in cleaned if cell != ""]) + ","
+#             csv_line = re.sub(r',,+', ',', csv_line)
+            
+#             if csv_line.strip(','):
+#                 csv_content.append(csv_line + "\n")
+#     return csv_content
+
+# def process_excel_content_to_csv(excel_content: bytes) -> List[dict]:
+#     xls = pd.ExcelFile(BytesIO(excel_content))
+    
+    
+#     for sheet_name in xls.sheet_names:
+#         csv_content = []
+#         csv_content.append(f"--- Sheet: {sheet_name} ---,\n")
+#         df = pd.read_excel(xls, sheet_name=sheet_name, header=None)
+#         csv_content=process_sheet(df)
+#         my_dict = printemp(csv_content)
+#         pprint(my_dict)
+#         print("--------------------------------------------------")
+#         continue
+
+
+
+
+
+# with open("JDJS- Staffing working (1).xlsx", "rb") as f:
+#     excel_bytes = f.read()
+
+# employees = process_excel_content_to_csv(excel_bytes)
+
+
+
+
+
+
