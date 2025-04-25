@@ -136,16 +136,14 @@ const EmployeeManagement: React.FC = () => {
         ? parseInt(value)
         : 0
       : value;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: newValue,
-      }));
+ 
     // Handle department change
     if (name === "departmentId") {
       const roles = newValue ? await fetchDepartmentRoles(Number(newValue)) : [];
       setDepartmentRoles(roles);
       setFormData((prev)=>({...prev,
-        roleId: 0,        // Reset role
+        roleId: 0,  
+        [name]: Number(newValue),      // Reset role
         jobCode: "",       // Reset job code
     }));
       setAvailableJobCodes([]); // Clear job codes
@@ -153,17 +151,22 @@ const EmployeeManagement: React.FC = () => {
     }
   
     // Handle role change
-    if (name === "roleId") {
+    else if (name === "roleId") {
       const jobCodes = newValue
         ? await fetchAvailableJobCodes(Number(newValue), formData.employeeNumber)
         : [];
       setAvailableJobCodes(jobCodes);
       setFormData((prev) => ({
         ...prev,
-       
+        [name]: Number(newValue),
         jobCode: "",       // Reset job code
       }));
       return;
+    }else{
+      setFormData((prev) => ({
+        ...prev,
+        [name]: newValue,
+      }));
     }
   
     // For all other fields
@@ -262,6 +265,7 @@ const EmployeeManagement: React.FC = () => {
     if (employee) {
       setModalLoading(true);
       setModalOpen(true);
+
       setIsEditing(true);
       setOriginalEmployee(employee);
 
@@ -282,6 +286,7 @@ const EmployeeManagement: React.FC = () => {
 
       setDepartmentRoles(deptRoles);
       setAvailableJobCodes(jobCodes);
+      
     } else {
       // Adding new employee
       setIsEditing(false);
@@ -300,7 +305,7 @@ const EmployeeManagement: React.FC = () => {
 
     }
     setModalLoading(false);
-
+    
     setSearchQuery("");
   };
 

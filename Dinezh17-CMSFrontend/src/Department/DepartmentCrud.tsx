@@ -6,23 +6,21 @@ import { toast, ToastContainer } from "react-toastify";
 interface Department {
   id: number;
   name: string;
-  business_division_id: number;
 }
 
-interface BusinessDivision {
-  id: number;
-  name: string;
-}
+// interface BusinessDivision {
+//   id: number;
+//   name: string;
+// }
 
 const DepartmentManagement: React.FC = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [businessDivisions, setBusinessDivisions] = useState<
-    BusinessDivision[]
-  >([]);
+  // const [businessDivisions, setBusinessDivisions] = useState<
+  //   BusinessDivision[]
+  // >([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    business_division_id: 0,
   });
   const [editingId, setEditingId] = useState<number | null>(null);
 
@@ -36,19 +34,19 @@ const DepartmentManagement: React.FC = () => {
     }
   };
 
-  const fetchBusinessDivisions = async () => {
-    try {
-      const response = await api.get("/business-divisions/");
-      setBusinessDivisions(response.data);
-    } catch (error: any) {
-      toast.error("Error fetching business divisions");
-      console.error("Error fetching business divisions:", error);
-    }
-  };
+  // const fetchBusinessDivisions = async () => {
+  //   try {
+  //     const response = await api.get("/business-divisions/");
+  //     setBusinessDivisions(response.data);
+  //   } catch (error: any) {
+  //     toast.error("Error fetching business divisions");
+  //     console.error("Error fetching business divisions:", error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchDepartments();
-    fetchBusinessDivisions();
+    // fetchBusinessDivisions();
   }, []);
 
   const handleSubmit = async () => {
@@ -57,14 +55,10 @@ const DepartmentManagement: React.FC = () => {
       return;
     }
 
-    if (formData.business_division_id === 0) {
-      toast.warn("Business Division is required!");
-      return;
-    }
+   
 
     const data = {
       name: formData.name.trim(),
-      business_division_id: Number(formData.business_division_id),
     };
 
     try {
@@ -102,13 +96,11 @@ const DepartmentManagement: React.FC = () => {
       setEditingId(department.id);
       setFormData({
         name: department.name,
-        business_division_id: department.business_division_id,
       });
     } else {
       setEditingId(null);
       setFormData({
         name: "",
-        business_division_id: 0,
       });
     }
     setModalOpen(true);
@@ -148,9 +140,7 @@ const DepartmentManagement: React.FC = () => {
               <th className="p-3 border-b font-medium border-gray-200 text-left">
                 Department Name
               </th>
-              <th className="p-3 border-b font-medium border-gray-200 text-left">
-                Business Division
-              </th>
+             
               <th className="p-3 border-b font-medium border-gray-200 text-left">
                 Actions
               </th>
@@ -158,16 +148,12 @@ const DepartmentManagement: React.FC = () => {
           </thead>
           <tbody>
             {departments.map((dept) => {
-              const division = businessDivisions.find(
-                (bd) => bd.id === dept.business_division_id
-              );
+              
               return (
                 <tr key={dept.id} className="hover:bg-blue-100">
                   <td className="p-3 border-t border-gray-100">{dept.id}</td>
                   <td className="p-3 border-t border-gray-100">{dept.name}</td>
-                  <td className="p-3 border-t border-gray-100">
-                    {division ? division.name : "Unknown"}
-                  </td>
+                  
                   <td className="p-3 border-t border-gray-100 space-x-2">
                     <button
                       className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
@@ -209,36 +195,7 @@ const DepartmentManagement: React.FC = () => {
               {editingId ? "Edit Department" : "Add Department"}
             </h3>
 
-            <label className="block text-sm font-small mb-1">
-              Business Division <span className="text-red-500">*</span>
-            </label>
-            {editingId ? (
-              <input
-                type="text"
-                readOnly
-                className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md bg-gray-100"
-                value={
-                  businessDivisions.find(
-                    (bd) => bd.id === formData.business_division_id
-                  )?.name || "Unknown"
-                }
-              />
-            ) : (
-              <select
-                name="business_division_id"
-                value={formData.business_division_id}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-2 mb-4 border border-gray-300 rounded-md`}
-                required
-              >
-                <option value={0}>Select Business Division</option>
-                {businessDivisions.map((division) => (
-                  <option key={division.id} value={division.id}>
-                    {division.name}
-                  </option>
-                ))}
-              </select>
-            )}
+        
 
             <label className="block text-sm font-small mb-1">
               Name <span className="text-red-500">*</span>

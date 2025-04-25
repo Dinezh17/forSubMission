@@ -241,7 +241,7 @@ const Navbar: React.FC = () => {
 
           {user.role === "ADMIN" && (
             <>
-              <Link
+              {/* <Link
                 to="/busineessDivision-crud" 
                 style={sidebarLinkStyle}
                 onClick={() => setMenuOpen(false)}
@@ -253,7 +253,7 @@ const Navbar: React.FC = () => {
                 }
               >
               Business Management
-              </Link>
+              </Link> */}
               <Link
                 to="/department-crud"
                 style={sidebarLinkStyle}

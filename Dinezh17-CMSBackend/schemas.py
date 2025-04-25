@@ -8,7 +8,6 @@ from datetime import date, datetime
 #depts schemas
 class DepartmentBase(BaseModel):
     name: str
-    business_division_id: int
 
 class DepartmentResponse(DepartmentBase):
     id: int
@@ -217,13 +216,6 @@ class JobDeleteRequest(BaseModel):
 
 
 
-class BusinessDivisionBase(BaseModel):
-    name: str
-
-class BusinessDivisionResponse(BusinessDivisionBase):
-    id: int
-    class Config:
-        orm_mode = True
 
 
 

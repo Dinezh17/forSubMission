@@ -26,7 +26,6 @@ def create_department(department: DepartmentBase, db: Session = Depends(get_db),
 
     new_department = Department(
         name=department.name.strip(),
-        business_division_id=department.business_division_id
     )
     db.add(new_department)
     db.commit()
@@ -87,7 +86,6 @@ def update_department(department_id: int, department_data: DepartmentBase,
             raise HTTPException(status_code=400, detail="Department name already exists")
 
     department.name = department_data.name.strip()
-    department.business_division_id = department_data.business_division_id
     db.commit()
     db.refresh(department)
 

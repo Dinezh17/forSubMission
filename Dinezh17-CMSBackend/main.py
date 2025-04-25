@@ -69,6 +69,5 @@ app.include_router(manager.router)
 app.include_router(job.router)
 
 
-app.include_router(businessDivision.router)
 
 
