@@ -17,13 +17,7 @@ def create_department(department: DepartmentBase, db: Session = Depends(get_db),
     if existing_department:
         raise HTTPException(status_code=400, detail="Department already exists")
     
-    # Check if business division exists
-    business_division = db.query(BusinessDivision).filter(
-        BusinessDivision.id == department.business_division_id
-    ).first()
-    if not business_division:
-        raise HTTPException(status_code=404, detail="Business division not found")
-
+  
     new_department = Department(
         name=department.name.strip(),
     )
