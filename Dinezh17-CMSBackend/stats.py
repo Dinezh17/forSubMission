@@ -22,9 +22,11 @@ def get_competency_gap_data(db: Session = Depends(get_db)):
         gap3 = 0
         gap4=0
         # Get all employee competencies for this competency
-        records = db.query(EmployeeCompetency).filter(
-            EmployeeCompetency.competency_code == comp.competency_code
+        records = db.query(EmployeeCompetency).join(Employee, Employee.employee_number == EmployeeCompetency.employee_number).filter(
+            EmployeeCompetency.competency_code == comp.competency_code,
+            Employee.evaluation_status == "True"  # or .ilike("true") for case-insensitive match
         ).all()
+
 
         for record in records:
             if record.required_score is not None and record.actual_score is not None:
@@ -54,17 +56,15 @@ def get_competency_gap_data(db: Session = Depends(get_db)):
 
 
 
-
 @router.get("/employee-competencies/details")
 def get_all_employee_competency_details(
     db: Session = Depends(get_db),
-   
 ):
-   
     results = (
         db.query(
             Employee.employee_number,
             Employee.employee_name,
+            Employee.evaluation_status,
             Competency.competency_code.label("competency_code"),
             Competency.competency_name.label("competency_name"),
             Competency.competency_description.label("competency_description"),
@@ -73,7 +73,8 @@ def get_all_employee_competency_details(
         )
         .join(Employee, Employee.employee_number == EmployeeCompetency.employee_number)
         .join(Competency, Competency.competency_code == EmployeeCompetency.competency_code)
-        .order_by(asc(Employee.employee_number)).all()
+        .order_by(asc(Employee.employee_number))
+        .all()
     )
 
     return [
@@ -84,21 +85,17 @@ def get_all_employee_competency_details(
             "competencyName": r.competency_name,
             "competencyDescription": r.competency_description,
             "requiredScore": r.required_score,
-            "actualScore": r.actual_score
+            "actualScore": r.actual_score if r.evaluation_status == "True" else "-",
+            "gap": (r.required_score - r.actual_score) if r.evaluation_status == "True" else "-"
         }
         for r in results
     ]
-
-
 
 @router.get("/score-emp-details/by-competency/{compcode}")
 def get_employee_gaps_by_competency(
     compcode: str,
     db: Session = Depends(get_db),
-    
 ):
-   
-   
     records = (
         db.query(EmployeeCompetency, Employee)
         .join(Employee, Employee.employee_number == EmployeeCompetency.employee_number)
@@ -109,21 +106,34 @@ def get_employee_gaps_by_competency(
     result = []
 
     for comp, emp in records:
-        if comp.required_score is not None and comp.actual_score is not None:
+        if emp.evaluation_status == "True" and comp.required_score is not None and comp.actual_score is not None:
             gap = comp.required_score - comp.actual_score
-            
             result.append({
-                    "employeeNumber": comp.employee_number,
-                    "employeeName": emp.employee_name,
-                    "requiredScore": comp.required_score,
-                    "actualScore": comp.actual_score,
-                    "gap": gap
-                })
+                "employeeNumber": comp.employee_number,
+                "employeeName": emp.employee_name,
+                "requiredScore": comp.required_score,
+                "actualScore": comp.actual_score,
+                "gap": gap
+            })
+        else:
+            result.append({
+                "employeeNumber": comp.employee_number,
+                "employeeName": emp.employee_name,
+                "requiredScore": comp.required_score,
+                "actualScore": "-",
+                "gap": "-"
+            })
+    
+    evaluated = [r for r in result if isinstance(r["gap"], (int, float))]
+    unevaluated = [r for r in result if r["gap"] == "-"]
 
-    # Sort by descending gap
-    result.sort(key=lambda x: x["gap"], reverse=True)
+    # Sort evaluated by gap
+    evaluated_sorted = sorted(evaluated, key=lambda x: x["gap"], reverse=False)
 
-    return result
+    # Final sorted result
+    final_result = evaluated_sorted + unevaluated
+    
+    return final_result
 
 
 

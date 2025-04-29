@@ -147,7 +147,7 @@ def delete_role(role_id: int, db: Session = Depends(get_db), current_user: dict 
     if employees_in_dept:
         raise HTTPException(
             status_code=400,
-            detail="Cannot delete department. Employees are still assigned to this role."
+            detail="Cannot delete role. Employees are still assigned to this role."
         )
     print(role.role_code)
     job =db.query(RoleJob.job_code).filter(RoleJob.role_code ==role.role_code ).first()

@@ -108,7 +108,7 @@ def delete_department(department_id: int, db: Session = Depends(get_db),
             status_code=400,
             detail="Cannot delete department Employees are still Assigned to this departments"
         )
-    role = db.query(DepartmentRole).filter(DepartmentRole.department_id==department_id)
+    role = db.query(DepartmentRole).filter(DepartmentRole.department_id==department_id).first()
     if role:
         raise HTTPException(
             status_code=400,
