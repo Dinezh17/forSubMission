@@ -27,8 +27,8 @@ interface EmployeeGap {
   employeeNumber: string;
   employeeName: string;
   requiredScore: number;
-  actualScore: number;
-  gap: number;
+  actualScore: string;
+  gap: string;
   employee_name?: string;
 }
 
@@ -367,7 +367,7 @@ const CompetencyGapTable: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {employeeGaps.map((employee, index) => (
+                  {employeeGaps?.map((employee, index) => (
                     <tr key={index}>
                       <td className="px-4 py-2 border border-gray-100">
                         {employee.employeeNumber}
@@ -383,7 +383,7 @@ const CompetencyGapTable: React.FC = () => {
                       </td>
                       <td
                         className={`px-4 py-2 border border-gray-100 font-semibold ${
-                          employee.gap <= 0 ? "text-green-500" : "text-red-500"
+                          employee.gap <= "0" && employee.gap!="-" ? "text-green-500" : "text-red-500"
                         }`}
                       >
                         {employee.gap}
@@ -394,7 +394,7 @@ const CompetencyGapTable: React.FC = () => {
               </table>
             )}
 
-            {employeeGaps.length === 0 && !loading && (
+            {employeeGaps?.length === 0 && !loading && (
               <div className="text-center py-6">
                 No employee gaps found for this competency
               </div>

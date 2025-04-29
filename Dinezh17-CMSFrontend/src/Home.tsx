@@ -88,15 +88,15 @@ const Home: React.FC = () => {
       
       <div ></div>
       <div style={contentStyle}>
-        <h1 style={titleStyle}>Competency Management App</h1>
+        <h1 style={titleStyle}>Competency Management</h1>
         <p style={subtitleStyle}>Streamline your team's skills assessment and development</p>
-        <button 
+        {!user?.refresh&& (<button 
           style={buttonStyle}
           onClick={handclick}
           
         >
           Get Started
-        </button>
+        </button>)}
       </div>
     </div>
   );

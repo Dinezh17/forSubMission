@@ -292,7 +292,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                job Management
+                Job Management
               </Link>
               <Link
                 to="/competency-crud"
@@ -305,7 +305,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                Competency
+                Competency Management (library)
               </Link>
               {/* <Link 
                 to="/role-competencies" 
@@ -353,7 +353,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                List Employee Evaluation Status
+                 Employee Evaluation List
               </Link>
               <Link
                 to="/employee-competencies-table"
@@ -366,7 +366,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                Employee Competency report
+                Employee Competency Report
               </Link>
 
               <Link
@@ -453,7 +453,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                job Management
+                Job Management
               </Link>
               <Link
                 to="/competency-crud"
@@ -466,7 +466,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                Competency
+                Competency Management (library)
               </Link>
               {/* <Link 
                 to="/role-competencies" 
@@ -514,7 +514,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                List Employee Evaluation Status
+                 Employee Evaluation List
               </Link>
               <Link
                 to="/employee-competencies-table"
@@ -527,7 +527,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                Employee Competency report
+                Employee Competency Report
               </Link>
 
               <Link
@@ -591,7 +591,7 @@ const Navbar: React.FC = () => {
                 (e.currentTarget.style.backgroundColor = "transparent")
               }
             >
-              My scores
+              My Scores
             </Link>
           </>
 

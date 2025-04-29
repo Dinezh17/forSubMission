@@ -135,7 +135,7 @@ const DepartmentManagement: React.FC = () => {
           <thead className="bg-gray-100">
             <tr>
               <th className="p-3 border-b font-medium border-gray-200 text-left">
-                ID
+              Department ID
               </th>
               <th className="p-3 border-b font-medium border-gray-200 text-left">
                 Department Name

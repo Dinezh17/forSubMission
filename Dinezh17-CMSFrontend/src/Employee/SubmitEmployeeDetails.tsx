@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../interceptor/api";
-import StatsBar from "../Myscores/InvidualStatsComponent";
 import { toast, ToastContainer } from "react-toastify";
 
 interface Employee {
@@ -294,11 +293,7 @@ const EmployeeEvaluationHod: React.FC = () => {
               <span>{formatDate(employee.last_evaluated_date)}</span>
             </div>
           </div>
-          {employeeNumber && (
-            <div className="mt-8 mb-8 w-full">
-              <StatsBar empNumber={employeeNumber} />
-            </div>
-          )}
+         
         </div>
 
         {renderCompetencyTable(functionalCompetencies, "Functional")}

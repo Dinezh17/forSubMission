@@ -9,9 +9,9 @@ interface EmployeeCompetency {
   competencyCode: string;
   competencyName:string;
   competencyDescription:string;
-  requiredScore:number
-  actualScore:number|0
-  
+  requiredScore:string
+  actualScore:string
+  gap : string
 }
 
 const EmployeeCompetencyTable: React.FC = () => {
@@ -67,7 +67,6 @@ const EmployeeCompetencyTable: React.FC = () => {
       </thead>
       <tbody>
         {data.map((row, index) => {
-          const gap = row.requiredScore - (row.actualScore ?? 0);
           return (
             <tr key={index} className="hover:bg-gray-50">
               <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
@@ -79,10 +78,10 @@ const EmployeeCompetencyTable: React.FC = () => {
               <td className="px-4 py-2 text-center border border-gray-300">{row.actualScore}</td>
               <td
                 className={`px-4 py-2 text-center border border-gray-300 font-semibold ${
-                  gap > 0 ? 'bg-red-100 text-red-700' : ''
+                  row.gap > "0" && row.gap !="-" ? 'bg-red-100 text-red-700' : ''
                 }`}
               >
-                {gap}
+                {row.gap}
               </td>
             </tr>
           );

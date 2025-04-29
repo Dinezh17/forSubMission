@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
 
-
 interface Employee {
   employee_number: string;
   employee_name: string;
@@ -327,7 +326,6 @@ const EmployeeManagement: React.FC = () => {
       setModalOpen(true);
     }
     setModalLoading(false);
-
   };
 
   const closeModal = () => {
@@ -376,8 +374,6 @@ const EmployeeManagement: React.FC = () => {
         )
       : null;
 
-
-      
     return (
       <div
         style={{
@@ -509,6 +505,7 @@ const EmployeeManagement: React.FC = () => {
                 options={filteredManagerOptions}
                 isClearable
                 isSearchable
+                menuPlacement="top"
                 placeholder="Select Reporting Manager"
                 className="text-sm"
                 styles={{

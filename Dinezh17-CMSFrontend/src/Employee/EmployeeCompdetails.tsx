@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api, { configureApi } from "../interceptor/api";
 import { AuthContext } from "../auth/AuthContext";
-import StatsBar from "../Myscores/InvidualStatsComponent";
 
 interface Employee {
   employee_number: string;
@@ -106,7 +105,7 @@ const EmployeeDetails: React.FC = () => {
                 <td className={`p-4 border border-gray-300 align-top text-base font-bold ${
                   comp.gap <= 0 ? "text-green-600" : "text-red-600"
                 }`}>
-                  {comp.gap}
+                  {employee?.evaluation_status === "True"?comp.gap:"-"}
                 </td>
               </tr>
             ))}
@@ -226,11 +225,7 @@ const EmployeeDetails: React.FC = () => {
               <span>{formatDate(employee.last_evaluated_date)}</span>
             </div>
           </div>
-          {employeeNumber && (
-            <div className="mt-8 mb-8 w-full">
-              <StatsBar empNumber={employeeNumber} />
-            </div>
-          )}
+         
         </div>
 
         {renderCompetencyTable(functionalCompetencies, "Functional")}

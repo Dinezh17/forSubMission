@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { configureApi } from "../interceptor/api";
 import { AuthContext } from "../auth/AuthContext";
-import StatsBar from "./InvidualStatsComponent";
 
 interface Employee {
   employee_number: string;
@@ -254,9 +253,7 @@ const Myscores: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6">
-            <StatsBar empNumber={employee.employee_number} />
-          </div>
+         
         </div>
 
         {renderCompetencyTable(functionalCompetencies, "Functional")}
