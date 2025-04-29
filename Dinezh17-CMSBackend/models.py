@@ -87,6 +87,16 @@ class RoleCompetency(Base):
     role_competency_required_score = Column(Integer ,default=1)
 
 
+class JobCompetency(Base):
+    __tablename__ = "job_competencies"
+    id = Column(Integer, primary_key=True, index=True)
+    role_id = Column(String, ForeignKey("role_job.job_code"))
+    competency_code = Column(String, ForeignKey("competencies.competency_code"))
+    role_competency_required_score = Column(Integer ,default=1)
+
+
+
+
 
  
 

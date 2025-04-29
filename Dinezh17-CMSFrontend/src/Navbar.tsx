@@ -383,7 +383,7 @@ const Navbar: React.FC = () => {
                 Competency Gap Analysis
               </Link>
 
-              <Link
+              {/* <Link
                 to="/employee-stats-overall"
                 style={sidebarLinkStyle}
                 onClick={() => setMenuOpen(false)}
@@ -395,7 +395,7 @@ const Navbar: React.FC = () => {
                 }
               >
                 Competency DashBoard
-              </Link>
+              </Link> */}
               <Link
                 to="/employee-eval-hod"
                 style={sidebarLinkStyle}
@@ -544,7 +544,7 @@ const Navbar: React.FC = () => {
                 Competency Gap Analysis
               </Link>
 
-              <Link
+              {/* <Link
                 to="/employee-stats-overall"
                 style={sidebarLinkStyle}
                 onClick={() => setMenuOpen(false)}
@@ -556,7 +556,7 @@ const Navbar: React.FC = () => {
                 }
               >
                 Competency DashBoard
-              </Link>
+              </Link> */}
             </>
           )}
 

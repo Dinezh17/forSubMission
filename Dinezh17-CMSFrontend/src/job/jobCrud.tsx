@@ -382,12 +382,12 @@ const JobManagement: React.FC = () => {
                     >
                       Remove
                     </button>
-                    <button
+                    {/* <button
                       className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm"
                       onClick={() => handleManageJobs(job)}
                     >
                       Manage Jobs
-                    </button>
+                    </button> */}
                   </div>
                 </td>
               </tr>

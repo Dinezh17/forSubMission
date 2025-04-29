@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import api, { configureApi } from "../interceptor/api";
 import { AuthContext } from "../auth/AuthContext";
+import Select from "react-select";
+
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 interface CompetencyGap {
   competencyCode: string;
@@ -30,6 +41,7 @@ const CompetencyGapTable: React.FC = () => {
   const [CompetencyName, setSelectedCompetencyName] = useState<string | null>(
     null
   );
+  const [selectedCode, setSelectedCode] = useState<string | null>(null);
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -40,6 +52,17 @@ const CompetencyGapTable: React.FC = () => {
     configureApi(logout);
   }, [logout]);
 
+  const options = [
+    { value: "", label: "-- Show All --" },
+    ...competencyGaps.map((item) => ({
+      value: item.competencyCode,
+      label: `${item.competencyCode} - ${item.competencyName}`,
+    })),
+  ];
+
+  const handleChange = (selectedOption: any) => {
+    setSelectedCode(selectedOption?.value || null);
+  };
   // Fetch competency gap data and employee data
   useEffect(() => {
     const fetchData = async () => {
@@ -95,6 +118,23 @@ const CompetencyGapTable: React.FC = () => {
   const closeDetails = () => {
     setShowDetails(false);
   };
+  const transformDataForChart = () => {
+    const data = competencyGaps.map((item) => ({
+      name: item.competencyCode,
+      "Gap Level 1": item.gap1,
+      "Gap Level 2": item.gap2,
+      "Gap Level 3": item.gap3,
+      "Gap Level 4": item.gap4,
+      fullName: item.competencyName,
+    }));
+
+    if (selectedCode) {
+      return data.filter((item) => item.name === selectedCode);
+    }
+    return data;
+  };
+
+  const chartData = transformDataForChart();
 
   if (loading && competencyGaps.length === 0) {
     return (
@@ -111,10 +151,69 @@ const CompetencyGapTable: React.FC = () => {
   }
 
   return (
-    <div className=" rounded-xl font-sans pt-10 mx-10 ">
-      <h1 className="text-2xl font-semibold mb-6 mt-18">
-        Competency Gap Analysis
-      </h1>
+    <div className=" rounded-xl font-sans pt-10 mb-10 mt-15 mx-10">
+    
+
+      {/* Bar Chart for Competency Gaps */}
+      <div className="mb-10 border border-gray-100 rounded-xl p-4 shadow-sm bg-white">
+        <h2 className="text-xl font-medium mb-4">
+          Competency Gap Distribution
+        </h2>
+        <div className="mb-4 flex items-center gap-4">
+          <label
+            htmlFor="competency-select"
+            className="font-medium text-gray-700"
+          >
+            Select Competency Code:
+          </label>
+          <div className="w-[500px]">
+            <Select
+              id="competency-select"
+              options={options}
+              value={
+                options.find((opt) => opt.value === selectedCode) || options[0]
+              }
+              onChange={handleChange}
+              className="react-select-container "
+              classNamePrefix="react-select"
+              placeholder="Select a Competency"
+              isClearable
+            />
+          </div>
+        </div>
+
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
+          >
+            <XAxis
+              dataKey="name"
+              angle={-45}
+              textAnchor="end"
+              height={70}
+              tick={{ fontSize: 12 }}
+            />
+
+            <YAxis allowDecimals={false} />
+
+            <Tooltip
+              formatter={(value, name) => [value, name]}
+              labelFormatter={(label) => {
+                const item = chartData.find((item) => item.name === label);
+                return `${label}: ${item?.fullName ?? ""}`;
+              }}
+            />
+
+            <Legend />
+
+            <Bar dataKey="Gap Level 1" fill="#4ade80" />
+            <Bar dataKey="Gap Level 2" fill="#facc15" />
+            <Bar dataKey="Gap Level 3" fill="#f87171" />
+            <Bar dataKey="Gap Level 4" fill="#f43f5e" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
 
       {/* Main Competency Gap Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
@@ -130,7 +229,7 @@ const CompetencyGapTable: React.FC = () => {
               <th className="px-4 py-2 text-left border border-gray-100">
                 Competency Name
               </th>
-              <th className="px-4 py-2 text-center border border-gray-100">   
+              <th className="px-4 py-2 text-center border border-gray-100">
                 Gap Level 1
               </th>
               <th className="px-4 py-2 text-center border border-gray-100">
@@ -219,7 +318,7 @@ const CompetencyGapTable: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.2)", 
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -282,9 +381,11 @@ const CompetencyGapTable: React.FC = () => {
                       <td className="px-4 py-2 border border-gray-100">
                         {employee.actualScore}
                       </td>
-                      <td className={`px-4 py-2 border border-gray-100 font-semibold ${
-                  employee.gap <= 0 ? "text-green-500" : "text-red-500"
-                }`} >
+                      <td
+                        className={`px-4 py-2 border border-gray-100 font-semibold ${
+                          employee.gap <= 0 ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
                         {employee.gap}
                       </td>
                     </tr>

@@ -15,3 +15,4 @@
 --     ('100000000', 'dummy', "dummy100",null,100,100, 'Not sent by anyone', NULL, 'Not evaluated', NULL);
 --   insert into department_roles values(2,100,100u
 UPDATE users set role = "ADMIN" where employee_number = "admin"
+  

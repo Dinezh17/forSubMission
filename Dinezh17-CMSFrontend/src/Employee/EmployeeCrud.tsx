@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import api from "../interceptor/api";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import Select from "react-select";
+
 
 interface Employee {
   employee_number: string;
@@ -38,6 +40,11 @@ interface JobCode {
   job_name: string;
 }
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 const EmployeeManagement: React.FC = () => {
   // State management
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -46,11 +53,10 @@ const EmployeeManagement: React.FC = () => {
   const [managers, setManagers] = useState<Manager[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalLoading, setModalLoading] = useState(false); // New loading state for modal
-
+  const [managerOptions, setManagerOptions] = useState<SelectOption[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [departmentRoles, setDepartmentRoles] = useState<Role[]>([]);
   const [availableJobCodes, setAvailableJobCodes] = useState<JobCode[]>([]);
 
@@ -80,6 +86,13 @@ const EmployeeManagement: React.FC = () => {
       setEmployees(empRes.data);
       setRoles(roleRes.data);
       setDepartments(deptsRes.data);
+
+      const options = managerRes.data.map((manager: Manager) => ({
+        value: manager.employee_number,
+        label: manager.employee_name,
+      }));
+
+      setManagerOptions(options);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -136,41 +149,52 @@ const EmployeeManagement: React.FC = () => {
         ? parseInt(value)
         : 0
       : value;
- 
+
     // Handle department change
     if (name === "departmentId") {
-      const roles = newValue ? await fetchDepartmentRoles(Number(newValue)) : [];
+      const roles = newValue
+        ? await fetchDepartmentRoles(Number(newValue))
+        : [];
       setDepartmentRoles(roles);
-      setFormData((prev)=>({...prev,
-        roleId: 0,  
-        [name]: Number(newValue),      // Reset role
-        jobCode: "",       // Reset job code
-    }));
+      setFormData((prev) => ({
+        ...prev,
+        roleId: 0,
+        [name]: Number(newValue), // Reset role
+        jobCode: "", // Reset job code
+      }));
       setAvailableJobCodes([]); // Clear job codes
       return;
     }
-  
+
     // Handle role change
     else if (name === "roleId") {
       const jobCodes = newValue
-        ? await fetchAvailableJobCodes(Number(newValue), formData.employeeNumber)
+        ? await fetchAvailableJobCodes(
+            Number(newValue),
+            formData.employeeNumber
+          )
         : [];
       setAvailableJobCodes(jobCodes);
       setFormData((prev) => ({
         ...prev,
         [name]: Number(newValue),
-        jobCode: "",       // Reset job code
+        jobCode: "", // Reset job code
       }));
       return;
-    }else{
+    } else {
       setFormData((prev) => ({
         ...prev,
         [name]: newValue,
       }));
     }
-  
+
     // For all other fields
-    
+  };
+  const handleManagerChange = (selectedOption: SelectOption | null) => {
+    setFormData((prev) => ({
+      ...prev,
+      reportingTo: selectedOption ? selectedOption.value : "",
+    }));
   };
 
   const validateForm = () => {
@@ -286,7 +310,6 @@ const EmployeeManagement: React.FC = () => {
 
       setDepartmentRoles(deptRoles);
       setAvailableJobCodes(jobCodes);
-      
     } else {
       // Adding new employee
       setIsEditing(false);
@@ -302,16 +325,13 @@ const EmployeeManagement: React.FC = () => {
       setDepartmentRoles([]);
       setAvailableJobCodes([]);
       setModalOpen(true);
-
     }
     setModalLoading(false);
-    
-    setSearchQuery("");
+
   };
 
   const closeModal = () => {
     setModalOpen(false);
-    setSearchQuery("");
 
     setOriginalEmployee(null);
     setIsEditing(false);
@@ -345,7 +365,19 @@ const EmployeeManagement: React.FC = () => {
         </div>
       );
     }
+    const filteredManagerOptions = managerOptions.filter(
+      (option) => option.value !== originalEmployee?.employee_number
+    );
 
+    // Find the current manager option if editing
+    const selectedManager = formData.reportingTo
+      ? filteredManagerOptions.find(
+          (option) => option.value === formData.reportingTo
+        )
+      : null;
+
+
+      
     return (
       <div
         style={{
@@ -471,38 +503,26 @@ const EmployeeManagement: React.FC = () => {
               <label className="block text-sm font-small mb-1">
                 Reporting Manager
               </label>
-              <input
-                type="text"
-                placeholder="Search Manager..."
-                className="w-full p-1 border border-gray-500 rounded mb-2"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+              <Select
+                value={selectedManager}
+                onChange={handleManagerChange}
+                options={filteredManagerOptions}
+                isClearable
+                isSearchable
+                placeholder="Select Reporting Manager"
+                className="text-sm"
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    borderColor: "#6b7280",
+                    minHeight: "34px",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    zIndex: 9999,
+                  }),
+                }}
               />
-              <select
-                name="reportingTo"
-                className="w-full p-1 border border-gray-500 rounded"
-                value={formData.reportingTo}
-                onChange={handleInputChange}
-              >
-                <option value="">Select Reporting Manager</option>
-                {managers
-                  .filter(
-                    (manager) =>
-                      manager.employee_name
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) &&
-                      manager.employee_number !==
-                        originalEmployee?.employee_number
-                  )
-                  .map((manager) => (
-                    <option
-                      key={manager.employee_number}
-                      value={manager.employee_number}
-                    >
-                      {manager.employee_name}
-                    </option>
-                  ))}
-              </select>
             </div>
           </div>
           <div className="flex justify-end space-x-3 mt-2 mb-4">
@@ -570,7 +590,13 @@ const EmployeeManagement: React.FC = () => {
               <th className="p-3 font-medium border-b border-gray-200">
                 Department
               </th>
-              <th className="p-3 font-medium border-b border-gray-200">Role</th>
+              <th className="p-3 font-medium border-b border-gray-200">
+                Role Code
+              </th>
+              <th className="p-3 font-medium border-b border-gray-200">
+                Role Name
+              </th>
+
               <th className="p-3 font-medium border-b border-gray-200 text-center">
                 Actions
               </th>
@@ -609,9 +635,11 @@ const EmployeeManagement: React.FC = () => {
                     {department?.name || "-"}
                   </td>
                   <td className="p-3 border-t border-gray-100">
+                    {role?.role_code || "-"}
+                  </td>
+                  <td className="p-3 border-t border-gray-100">
                     {role?.role_name || "-"}
                   </td>
-
                   <td className="p-3 border-t border-gray-100">
                     <div className="flex flex-wrap gap-2 justify-center">
                       <button
