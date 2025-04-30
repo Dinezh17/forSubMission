@@ -44,6 +44,7 @@ def get_competency_gap_data(db: Session = Depends(get_db)):
         result.append({
             "competencyCode": comp.competency_code,
             "competencyName": comp.competency_name,
+            "classification":comp.competency_description,
             "gap1": gap1,
             "gap2": gap2,
             "gap3": gap3,
@@ -70,7 +71,7 @@ def get_all_employee_competency_details(
             Competency.competency_description.label("competency_description"),
             EmployeeCompetency.required_score,
             EmployeeCompetency.actual_score
-        )
+        ).filter(Employee.evaluation_status=="True")
         .join(Employee, Employee.employee_number == EmployeeCompetency.employee_number)
         .join(Competency, Competency.competency_code == EmployeeCompetency.competency_code)
         .order_by(asc(Employee.employee_number))

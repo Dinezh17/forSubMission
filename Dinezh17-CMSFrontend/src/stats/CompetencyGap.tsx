@@ -16,6 +16,8 @@ import {
 interface CompetencyGap {
   competencyCode: string;
   competencyName: string;
+  classification: string;
+  
   gap1: number;
   gap2: number;
   gap3: number;
@@ -223,12 +225,16 @@ const CompetencyGapTable: React.FC = () => {
         >
           <thead>
             <tr className="bg-gray-100 ">
+            <th className="px-4 py-2 text-left border border-gray-100">
+                Classification
+              </th>
+            <th className="px-4 py-2 text-left border border-gray-100">
+                Competency 
+              </th>
               <th className="px-4 py-2 text-left border border-gray-100">
                 Competency Code
               </th>
-              <th className="px-4 py-2 text-left border border-gray-100">
-                Competency Name
-              </th>
+           
               <th className="px-4 py-2 text-center border border-gray-100">
                 Gap Level 1
               </th>
@@ -253,10 +259,13 @@ const CompetencyGapTable: React.FC = () => {
             {competencyGaps.map((gap) => (
               <tr key={gap.competencyCode} className="border-b border-gray-100">
                 <td className="px-4 py-2 border border-gray-100">
-                  {gap.competencyCode}
+                  {gap.classification}
                 </td>
                 <td className="px-4 py-2 border border-gray-100">
                   {gap.competencyName}
+                </td>
+                <td className="px-4 py-2 border border-gray-100">
+                  {gap.competencyCode}
                 </td>
                 <td
                   className={`px-4 py-2 text-center border border-gray-100 ${
