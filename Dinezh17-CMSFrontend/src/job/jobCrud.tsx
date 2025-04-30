@@ -31,6 +31,11 @@ interface FormErrors {
   prefix: string;
   start: string;
 }
+interface JobCode {
+  job_code: string;
+  job_name: string;
+  job_status: boolean;
+}
 
 const JobManagement: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -52,7 +57,8 @@ const JobManagement: React.FC = () => {
     prefix: "",
     start: "",
   });
-
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [jobCodes, setJobCodes] = useState<JobCode[]>([]);
   useEffect(() => {
     fetchRoles();
     fetchJobs();
@@ -62,7 +68,18 @@ const JobManagement: React.FC = () => {
     const res = await api.get("/roles");
     setRoles(res.data);
   };
-
+  const ViewCodes = async (job: JobSummary) => {
+    try {
+      const response = await api.get(
+        `/jobs/by-role/${job.role_code}/${job.job_name}`
+      );
+      setJobCodes(response.data);
+      setCurrentJob(job);
+      setViewModalOpen(true);
+    } catch (err: any) {
+      toast.error("Failed to fetch job codes: " + err?.response?.data?.detail);
+    }
+  };
   const fetchJobs = async () => {
     const res = await api.get("/jobs-summary");
     setJobSummaries(res.data.jobs_by_name);
@@ -289,10 +306,6 @@ const JobManagement: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handleManageJobs = (job: JobSummary) => {
-    navigate(`/job-manage/${job.role_code}/${job.job_name}`);
-  };
-
   const openDeleteModal = (job: JobSummary) => {
     setCurrentJob(job);
     setFormData({
@@ -336,7 +349,7 @@ const JobManagement: React.FC = () => {
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-100">
             <tr>
-            <th className="p-3 border-b font-medium border-gray-300 text-left">
+              <th className="p-3 border-b font-medium border-gray-300 text-left">
                 Department
               </th>
 
@@ -354,9 +367,7 @@ const JobManagement: React.FC = () => {
               <th className="p-3 border-b font-medium border-gray-300 text-left">
                 Job Name
               </th>
-              <th className="p-3 border-b font-medium border-gray-300 text-left">
-                LastCode
-              </th>
+
               <th className="p-3 border-b border-gray-300 font-medium text-left">
                 Count
               </th>
@@ -382,7 +393,6 @@ const JobManagement: React.FC = () => {
                   {job.role_category}
                 </td>
                 <td className="p-3 border-b border-gray-100">{job.job_name}</td>
-                <td className="p-3 border-b border-gray-100">{job.LastCode}</td>
                 <td className="p-3 border-b border-gray-100">{job.count}</td>
                 <td className="p-3 border-b border-gray-100">
                   <div className="flex gap-2">
@@ -398,12 +408,12 @@ const JobManagement: React.FC = () => {
                     >
                       Remove
                     </button>
-                    {/* <button
+                    <button
                       className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm"
-                      onClick={() => handleManageJobs(job)}
+                      onClick={() => ViewCodes(job)}
                     >
-                      Manage Jobs
-                    </button> */}
+                      View Jobs Codes
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -612,6 +622,70 @@ const JobManagement: React.FC = () => {
                 className="py-2 px-4 rounded bg-gray-300 hover:bg-gray-200 transition-all"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Job Codes Modal */}
+      {viewModalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div className="bg-white p-6 rounded-lg w-1/3  mt-20 mb-20 modal-container">
+            <div className="mb-4">
+              <label className="block">Role Name:</label>
+              <span className="text-gray-600">{currentJob?.role_name}</span>
+            </div>
+            <div className="mb-4">
+              <label className="block">Job Name:</label>
+              <span className="text-gray-600">{currentJob?.job_name}</span>
+            </div>
+            <div className="mb-4">
+              <label className="block">Total Job Codes:</label>
+              <span className="text-gray-600">{jobCodes.length}</span>
+            </div>
+
+            <div className="max-h-66 overflow-y-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-gray-100 sticky top-0">
+                  <tr>
+                    <th className="p-3 border-b font-medium border-gray-300 text-left">
+                      Job Code
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {jobCodes.map((job) => (
+                    <tr key={job.job_code} className="hover:bg-gray-50">
+                      <td className="p-3 border-b border-gray-100">
+                        {job.job_code}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setViewModalOpen(false)}
+                className="py-2 px-4 rounded bg-gray-300 hover:bg-gray-200 transition-all"
+              >
+                Close
               </button>
             </div>
           </div>

@@ -69,6 +69,9 @@ def get_jobs_summary(db: Session = Depends(get_db)):
     }
 
 
+
+
+
 @router.get("/available-job-codes/{role_code}", response_model=List[JobCodeResponse])
 def get_available_job_codes(role_code: str , employee_number: str = Query(...), db: Session = Depends(get_db)):
    
@@ -77,27 +80,21 @@ def get_available_job_codes(role_code: str , employee_number: str = Query(...), 
     assigned_job_codes = [code[0] for code in db.query(Employee.job_code).filter(Employee.employee_number!=employee_number).all()]
     print(assigned_job_codes)
     # Get unique job names for the requested role
-    job_names = db.query(RoleJob.job_name)\
-                  .filter(RoleJob.role_code == role_code)\
-                  .distinct()\
-                  .all()
+    
     
     result = []
     
-    # For each job name, find the next   first available job code
-    for job_name_tuple in job_names:
-        job_name = job_name_tuple[0]
-        
+ 
         # Find first available job code for this job name
-        available = db.query(RoleJob)\
+    available = db.query(RoleJob)\
                             .filter(
                                 RoleJob.role_code == role_code,
-                                RoleJob.job_name == job_name,
+                                
                                 ~RoleJob.job_code.in_(assigned_job_codes),
                                 RoleJob.job_status==True
                             ).all()
         
-        for first_available in available:
+    for first_available in available:
             result.append({
                 "job_code": first_available.job_code,
                 "job_name": first_available.job_name
@@ -154,7 +151,7 @@ async def delete_jobs(delete_request: JobDeleteRequest, db: Session = Depends(ge
 
 
 
-
+    
 class RoleJobOut(BaseModel):
     job_code: str
     job_name: str
