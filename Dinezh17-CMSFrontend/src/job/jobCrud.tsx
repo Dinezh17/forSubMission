@@ -67,7 +67,7 @@ const JobManagement: React.FC = () => {
   const fetchRoles = async () => {
     const res = await api.get("/roles");
     setRoles(res.data);
-  };
+  }; 
   const ViewCodes = async (job: JobSummary) => {
     try {
       const response = await api.get(
