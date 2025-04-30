@@ -353,7 +353,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                 Employee Evaluation List
+                Employee Evaluation List
               </Link>
               <Link
                 to="/employee-competencies-table"
@@ -416,7 +416,7 @@ const Navbar: React.FC = () => {
           {user.role === "HR" && (
             <>
               <Link
-                to="/role-crud"
+                to="/competency-crud"
                 style={sidebarLinkStyle}
                 onClick={() => setMenuOpen(false)}
                 onMouseOver={(e) =>
@@ -426,7 +426,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                Role Management
+                Competency Management (library)
               </Link>
               <Link
                 to="/department-crud"
@@ -441,7 +441,19 @@ const Navbar: React.FC = () => {
               >
                 Department Management
               </Link>
-
+              <Link
+                to="/role-crud"
+                style={sidebarLinkStyle}
+                onClick={() => setMenuOpen(false)}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.backgroundColor = theme.secondary)
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
+              >
+                Role Management
+              </Link>
               <Link
                 to="/job-crud"
                 style={sidebarLinkStyle}
@@ -455,19 +467,7 @@ const Navbar: React.FC = () => {
               >
                 Job Management
               </Link>
-              <Link
-                to="/competency-crud"
-                style={sidebarLinkStyle}
-                onClick={() => setMenuOpen(false)}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.secondary)
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = "transparent")
-                }
-              >
-                Competency Management (library)
-              </Link>
+
               {/* <Link 
                 to="/role-competencies" 
                 style={sidebarLinkStyle} 
@@ -514,7 +514,7 @@ const Navbar: React.FC = () => {
                   (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
-                 Employee Evaluation List
+                Employee Evaluation List
               </Link>
               <Link
                 to="/employee-competencies-table"
@@ -529,7 +529,6 @@ const Navbar: React.FC = () => {
               >
                 Employee Competency Report
               </Link>
-
               <Link
                 to="/competency-gap-table"
                 style={sidebarLinkStyle}
@@ -543,7 +542,6 @@ const Navbar: React.FC = () => {
               >
                 Competency Gap Analysis
               </Link>
-
               {/* <Link
                 to="/employee-stats-overall"
                 style={sidebarLinkStyle}

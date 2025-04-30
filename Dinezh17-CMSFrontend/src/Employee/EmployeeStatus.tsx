@@ -47,7 +47,7 @@ const EmployeeEvaluation: React.FC = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [loadingDetails, setLoadingDetails] = useState(false);
- 
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -71,12 +71,10 @@ const EmployeeEvaluation: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-
   }, []);
 
   useEffect(() => {
     applyFilters();
-    
   }, [employees, searchTerm, reportingemp, departmentFilter, statusFilter]);
 
   const applyFilters = () => {
@@ -159,26 +157,25 @@ const EmployeeEvaluation: React.FC = () => {
   const markAsPending = async () => {
     if (selectedEmployees.length === 0) return;
 
-  if (window.confirm("Are you sure to send these employees for evaluation?")) {
-    try {
-      
+    if (
+      window.confirm("Are you sure to send these employees for evaluation?")
+    ) {
+      try {
+        await api.patch("/employees/evaluation-status", {
+          employee_numbers: selectedEmployees,
+        });
+        toast.success(" updating evaluation status success");
 
-      await api.patch("/employees/evaluation-status", {
-        employee_numbers: selectedEmployees
-  
-      });
-      toast.success(" updating evaluation status success");
+        setSelectedEmployees([]);
+        setSelectAll(false);
+        // Now fetch new data
+        fetchData();
+      } catch (error: any) {
+        toast.error("Error updating evaluation status:", error);
 
-      setSelectedEmployees([]);
-      setSelectAll(false);
-      // Now fetch new data
-      fetchData();
-    } catch (error:any) {
-      toast.error("Error updating evaluation status:", error);
-      
-      console.error("Error updating evaluation status:", error);
+        console.error("Error updating evaluation status:", error);
+      }
     }
-  }
   };
 
   const viewEmployeeDetails = (employeeNumber: string) => {
@@ -283,29 +280,34 @@ const EmployeeEvaluation: React.FC = () => {
                 #
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
-                Employee
+                Employee Number
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
-                Job
-              </th>
-
-              <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
-                Reporting To
+                Employee Name
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
                 Department
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
-                Role
+                Role Code
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
-                Category
+                Role Name
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
+                Role Category
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
+                Job Code
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
+                Job Name
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
+                Reporting Manager
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
                 Status
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
-                Last Evaluated
               </th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
                 Actions
@@ -319,18 +321,14 @@ const EmployeeEvaluation: React.FC = () => {
                   departments.find((d) => d.id == employee.department_id)
                     ?.name || "N/A";
                 const role = roles.find((r) => r.id === employee.role_id);
-                const roleName = role?.role_name || "N/A";
-                const roleCategory = role?.role_category || "N/A";
+            
                 const reportingName =
                   managers.find(
                     (d) =>
                       d.employee_number.toString() === employee.reporting_to
                   )?.employee_name || "N/A";
 
-                const formattedDate = employee.last_evaluated_date
-                  ? new Date(employee.last_evaluated_date).toLocaleDateString()
-                  : "N/A";
-
+               
                 return (
                   <tr
                     key={employee.employee_number}
@@ -349,12 +347,20 @@ const EmployeeEvaluation: React.FC = () => {
                         id={`employee-${employee.employee_number}`}
                       />
                     </td>
+                    <td className="px-4 py-2">{employee.employee_number}</td>
                     <td className="px-4 py-2">{employee.employee_name}</td>
+                    <td className="px-4 py-2">{deptName}</td>
+                    <td className="px-4 py-2">{role?.role_code}</td>
+                    <td className="px-4 py-2">{role?.role_name}</td>
+
+                    <td className="px-4 py-2">{role?.role_category}</td>
+
+
+                    <td className="px-4 py-2">{employee.job_code}</td>
+
                     <td className="px-4 py-2">{employee.job_name}</td>
                     <td className="px-4 py-2">{reportingName}</td>
-                    <td className="px-4 py-2">{deptName}</td>
-                    <td className="px-4 py-2">{roleName}</td>
-                    <td className="px-4 py-2">{roleCategory}</td>
+               
                     <td className="px-4 py-2">
                       <span
                         className={`px-2 py-1 text-xs font-semibold rounded-md whitespace-nowrap ${
@@ -374,7 +380,6 @@ const EmployeeEvaluation: React.FC = () => {
                           : "Pending"}
                       </span>
                     </td>
-                    <td className="px-4 py-2">{formattedDate}</td>
                     <td className="px-4 py-2">
                       <button
                         className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"

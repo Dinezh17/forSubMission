@@ -12,6 +12,8 @@ interface Employee {
   department: string;
   role: string;
   role_code: string;
+  role_category: string;
+
   evaluation_status: string;
   sent_to_evaluation_by?: string;
   evaluation_by?: string;
@@ -75,28 +77,32 @@ const Myscores: React.FC = () => {
         {title} Competencies
       </h3>
       <div className="overflow-x-auto rounded-sm">
-        <table className="min-w-full bg-white border border-gray-200 text-sm">
+        <table className="min-w-full table-fixed bg-white border border-gray-200 text-sm">
           <thead className="bg-gray-100 text-gray-700 font-semibold rounded-2xl">
             <tr>
-              <th className="text-left p-3 border-gray-200">Code</th>
-              <th className="text-left p-3 border-gray-200">Name</th>
-              <th className="text-left p-3 border-gray-200">Description</th>
-              <th className="text-left p-3 border-gray-200">Required</th>
-              <th className="text-left p-3 border-gray-200">Actual</th>
-              <th className="text-left p-3 border-gray-200">Gap</th>
+              <th className="w-1/6 p-3 text-left border-gray-200">
+                Classification
+              </th>
+              <th className="w-1/5 p-3 text-left border-gray-200">
+                Competency
+              </th>
+              <th className="w-1/6 p-3 text-left border-gray-200">Competency Code</th>
+              <th className="w-1/12 p-3 text-left border-gray-200">RPL</th>
+              <th className="w-1/12 p-3 text-left border-gray-200">APL</th>
+              <th className="w-1/12 p-3 text-left border-gray-200">Gap</th>
             </tr>
           </thead>
           <tbody>
             {competencies.map((comp) => (
               <tr key={comp.competency_code} className="hover:bg-gray-50">
                 <td className="text-left p-3 border-gray-200">
-                  {comp.competency_code}
+                  {comp.competency_description}
                 </td>
                 <td className="text-left p-3 border-gray-200">
                   {comp.competency_name}
                 </td>
                 <td className="text-left p-3 border-gray-200">
-                  {comp.competency_description}
+                  {comp.competency_code}
                 </td>
                 <td className="text-left p-3 border-gray-200">
                   {comp.required_score}
@@ -163,43 +169,56 @@ const Myscores: React.FC = () => {
               <span className="text-sm text-gray-500 font-medium">
                 Employee Number:
               </span>
-              <span className="text-base text-gray-800">
-                {employee.employee_number}
-              </span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Name:</span>
-              <span className="text-base text-gray-800">
-                {employee.employee_name}
-              </span>
+              <span>{employee.employee_number}</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-gray-500 font-medium">
-                Job Name:
+                Employee Name:
               </span>
-              <span className="text-base text-gray-800">
-                {employee.job_name}
+              <span>{employee.employee_name}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Department:
               </span>
+              <span>{employee.department}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Role Code:
+              </span>
+              <span>{employee.role_code}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Role Name:
+              </span>
+              <span>{employee.role}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Role Category:
+              </span>
+              <span>{employee.role_category}</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-gray-500 font-medium">
                 Job Code:
               </span>
-              <span className="text-base text-gray-800">
-                {employee.job_code}
-              </span>
+              <span>{employee.job_code}</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-sm text-gray-500 font-medium">
-                Reporting To:
+                Job Name:
               </span>
-              <span className="text-base text-gray-800">
-                {employee.reporting_employee_name || "N/A"}
-              </span>
+              <span>{employee.job_name}</span>
             </div>
+
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Role:</span>
-              <span className="text-base text-gray-800">{`${employee.role} (${employee.role_code})`}</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Reporting Manager:
+              </span>
+              <span>{employee.reporting_employee_name || "N/A"}</span>
             </div>
           </div>
         </div>
@@ -252,8 +271,6 @@ const Myscores: React.FC = () => {
               </span>
             </div>
           </div>
-
-         
         </div>
 
         {renderCompetencyTable(functionalCompetencies, "Functional")}

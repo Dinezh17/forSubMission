@@ -9,8 +9,10 @@ interface Role {
 }
 
 interface JobSummary {
+  department_name: string;
   role_code: string;
   role_name: string;
+  role_category: string;
   job_name: string;
   LastCode: string;
   count: number;
@@ -36,7 +38,7 @@ const JobManagement: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [currentJob, setCurrentJob] = useState<JobSummary | null>(null);
   const [formData, setFormData] = useState<JobFormData>({
     role_code: "",
@@ -160,46 +162,46 @@ const JobManagement: React.FC = () => {
     if (!currentJob) return;
 
     if (!formData.count.trim()) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        count: "Count is required"
+        count: "Count is required",
       }));
       return;
     }
 
     const countError = validateCount(formData.count);
     if (countError) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        count: countError
+        count: countError,
       }));
       return;
     }
 
     const countNum = parseInt(formData.count);
     if (countNum > currentJob.count) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        count: `Cannot remove more than ${currentJob.count} jobs`
+        count: `Cannot remove more than ${currentJob.count} jobs`,
       }));
       return;
     }
-    if(window.confirm("Confirm job deletion")){
-    try {
-      await api.delete("/jobs", {
-        data: {
-          job_name: currentJob.job_name,
-          role_code: currentJob.role_code,
-          count: countNum,
-        },
-      });
-      toast.warn("Jobs removed successfully");
-      fetchJobs();
-      closeDeleteModal();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail || "Failed to delete jobs.");
+    if (window.confirm("Confirm deletion")) {
+      try {
+        await api.delete("/jobs", {
+          data: {
+            job_name: currentJob.job_name,
+            role_code: currentJob.role_code,
+            count: countNum,
+          },
+        });
+        toast.warn("Jobs removed successfully");
+        fetchJobs();
+        closeDeleteModal();
+      } catch (err: any) {
+        toast.error("Failed " + err?.response?.data?.detail);
+      }
     }
-  }
   };
 
   const handleChange = (
@@ -210,47 +212,47 @@ const JobManagement: React.FC = () => {
     if (name === "count") {
       // Only allow numeric input
       if (value === "" || /^\d*$/.test(value)) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          [name]: value
+          [name]: value,
         }));
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          count: validateCount(value)
+          count: validateCount(value),
         }));
       }
     } else if (name === "start") {
       // Only allow numeric input
       if (value === "" || /^\d*$/.test(value)) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          [name]: value
+          [name]: value,
         }));
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          start: validateStart(value)
+          start: validateStart(value),
         }));
       }
     } else if (name === "prefix") {
       // Validate prefix - prevent numeric input
       const prefixError = validatePrefix(value);
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        prefix: prefixError
-            }));
+        prefix: prefixError,
+      }));
 
       // Update the prefix even while of error to show the validation message
       if (/^[^\d]*$/.test(value)) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          [name]: value
+          [name]: value,
         }));
       }
     } else {
       // other fields
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
@@ -288,10 +290,8 @@ const JobManagement: React.FC = () => {
   };
 
   const handleManageJobs = (job: JobSummary) => {
-    
     navigate(`/job-manage/${job.role_code}/${job.job_name}`);
   };
-
 
   const openDeleteModal = (job: JobSummary) => {
     setCurrentJob(job);
@@ -336,8 +336,20 @@ const JobManagement: React.FC = () => {
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-100">
             <tr>
+            <th className="p-3 border-b font-medium border-gray-300 text-left">
+                Department
+              </th>
+
+              <th className="p-3 border-b font-medium border-gray-300 text-left">
+                Role Code
+              </th>
+
               <th className="p-3 border-b font-medium border-gray-300 text-left">
                 Role Name
+              </th>
+
+              <th className="p-3 border-b font-medium border-gray-300 text-left">
+                Role Category
               </th>
               <th className="p-3 border-b font-medium border-gray-300 text-left">
                 Job Name
@@ -357,17 +369,21 @@ const JobManagement: React.FC = () => {
             {jobSummaries.map((job) => (
               <tr key={job.job_name} className="hover:bg-blue-100">
                 <td className="p-3 border-b border-gray-100">
+                  {job.department_name}
+                </td>
+
+                <td className="p-3 border-b border-gray-100">
+                  {job.role_code}
+                </td>
+                <td className="p-3 border-b border-gray-100">
                   {job.role_name}
                 </td>
                 <td className="p-3 border-b border-gray-100">
-                  {job.job_name}
+                  {job.role_category}
                 </td>
-                <td className="p-3 border-b border-gray-100">
-                  {job.LastCode}
-                </td>
-                <td className="p-3 border-b border-gray-100">
-                  {job.count}
-                </td>
+                <td className="p-3 border-b border-gray-100">{job.job_name}</td>
+                <td className="p-3 border-b border-gray-100">{job.LastCode}</td>
+                <td className="p-3 border-b border-gray-100">{job.count}</td>
                 <td className="p-3 border-b border-gray-100">
                   <div className="flex gap-2">
                     <button
@@ -419,7 +435,9 @@ const JobManagement: React.FC = () => {
 
             {!editMode ? (
               <>
-                <label className="block">Role</label>
+                <label className="block">
+                  Role <span className="text-red-500">*</span>
+                </label>
                 <select
                   name="role_code"
                   value={formData.role_code}
@@ -436,7 +454,9 @@ const JobManagement: React.FC = () => {
               </>
             ) : (
               <div className="mb-4">
-                <label className="block">Role Name:</label>
+                <label className="block">
+                  Role Name<span className="text-red-500">*</span>
+                </label>
                 <span className="text-gray-600">
                   {
                     roles.find((r) => r.role_code === formData.role_code)
@@ -446,35 +466,46 @@ const JobManagement: React.FC = () => {
               </div>
             )}
 
-            <label className="block">Job Name</label>
+            <label className="block">
+              Job Name<span className="text-red-500">*</span>
+            </label>
             <input
               name="job_name"
               value={formData.job_name}
               onChange={handleChange}
-              className={`w-full p-2 border border-gray-300 rounded mb-4  ${editMode?"bg-gray-100":""}`}
-              placeholder="Job Name"
+              className={`w-full p-2 border border-gray-300 rounded mb-4  ${
+                editMode ? "bg-gray-100" : ""
+              }`}
               readOnly={editMode}
             />
 
-            <label className="block">Prefix (letters only)</label>
+            <label className="block">
+              Job Code <span className="text-red-500">*</span>
+            </label>
             <input
               name="prefix"
               value={formData.prefix}
               onChange={handleChange}
-              className={`w-full p-2 border border-gray-300 rounded mb-4  ${editMode?"bg-gray-100":""}`}
-              placeholder="Prefix (letters only)"
+              className={`w-full p-2 border border-gray-300 rounded mb-4  ${
+                editMode ? "bg-gray-100" : ""
+              }`}
+              placeholder="Prefix (Alphabets only)"
               readOnly={editMode}
             />
             {errors.prefix && (
               <div className="text-red-500 text-sm mb-4">{errors.prefix}</div>
             )}
 
-            <label className="block">Starting Number</label>
+            <label className="block">
+              Starting Number <span className="text-red-500">*</span>
+            </label>
             <input
               name="start"
               value={formData.start}
               onChange={!editMode ? handleChange : undefined}
-              className={`w-full p-2 border border-gray-300 rounded mb-4 ${editMode?"bg-gray-100":""}`}
+              className={`w-full p-2 border border-gray-300 rounded mb-4 ${
+                editMode ? "bg-gray-100" : ""
+              }`}
               placeholder="Starting Number"
               readOnly={editMode}
             />
@@ -482,7 +513,9 @@ const JobManagement: React.FC = () => {
               <div className="text-red-500 text-sm mb-4">{errors.start}</div>
             )}
 
-            <label className="block">Count</label>
+            <label className="block">
+              Count <span className="text-red-500">*</span>
+            </label>
             <input
               name="count"
               placeholder="Count"
@@ -541,9 +574,7 @@ const JobManagement: React.FC = () => {
 
             <div className="mb-4">
               <label className="block">Role Name:</label>
-              <span className="text-gray-600">
-                {currentJob?.role_name}
-              </span>
+              <span className="text-gray-600">{currentJob?.role_name}</span>
             </div>
 
             <div className="mb-4">

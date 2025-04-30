@@ -8,7 +8,7 @@ interface Role {
   role_code: string;
   role_name: string;
   role_category: string;
-  assigned_comp_count:number;
+  assigned_comp_count: number;
   department_name: string;
 }
 
@@ -32,7 +32,9 @@ const RoleManagement: React.FC = () => {
     role_name: "",
     role_category: "",
   });
-  const [selectedDepartment, setSelectedDepartment] = useState<number | null>(null);
+  const [selectedDepartment, setSelectedDepartment] = useState<number | null>(
+    null
+  );
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingDepartment, setEditingDpt] = useState<string | null>(null);
 
@@ -64,16 +66,20 @@ const RoleManagement: React.FC = () => {
   }, []);
 
   const handleSubmit = async () => {
-    if (!formData.role_code.trim() || !formData.role_category.trim() || !formData.role_name.trim()) {
+    if (
+      !formData.role_code.trim() ||
+      !formData.role_category.trim() ||
+      !formData.role_name.trim()
+    ) {
       toast.warn("All fields are required!");
       return;
     }
-  
+
     if (!selectedDepartment && !editingId) {
       toast.warn("Please select a department");
       return;
     }
-  
+
     try {
       if (editingId) {
         await api.put(`/roles/${editingId}`, formData);
@@ -82,7 +88,7 @@ const RoleManagement: React.FC = () => {
         // Single request with department assignment
         const requestData = {
           ...formData,
-          department_id: selectedDepartment
+          department_id: selectedDepartment,
         };
         await api.post("/roles", requestData);
         toast.success("Role created and assigned successfully");
@@ -90,14 +96,12 @@ const RoleManagement: React.FC = () => {
       fetchRoles();
       closeModal();
     } catch (error: any) {
-      toast.error("Failed: " + (error?.response?.data?.detail || error.message));
+      toast.error(
+        "Failed: " + (error?.response?.data?.detail || error.message)
+      );
       console.error("Error saving role:", error);
     }
   };
-
-
-
-  
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Delete this role?")) {
@@ -119,7 +123,7 @@ const RoleManagement: React.FC = () => {
   const openModal = (role?: Role) => {
     if (role) {
       setEditingId(role.id);
-      setEditingDpt(role.department_name)
+      setEditingDpt(role.department_name);
       setFormData({
         role_code: role.role_code,
         role_name: role.role_name,
@@ -137,7 +141,7 @@ const RoleManagement: React.FC = () => {
     setModalOpen(false);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement |HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -181,7 +185,6 @@ const RoleManagement: React.FC = () => {
                 key={role.id}
                 className="hover:bg-blue-100 border-b border-gray-200"
               >
-               
                 <td className="p-3 border-b border-gray-200">
                   {role.role_code}
                 </td>
@@ -195,7 +198,7 @@ const RoleManagement: React.FC = () => {
                   {role.department_name}
                 </td>
                 <td className="p-3 border-b border-gray-200">
-                  {role.assigned_comp_count} Assigned  
+                  {role.assigned_comp_count} Assigned
                 </td>
                 <td className="p-3 border-b border-gray-200">
                   <div className="flex flex-wrap gap-2 justify-center">
@@ -245,53 +248,58 @@ const RoleManagement: React.FC = () => {
               {editingId ? "Edit Role" : "Add Role"}
             </h3>
 
-            {editingId && (<>
-                 <label className="block text-sm font-small mb-1">
-                 Department <span className="text-red-500">*</span>
-               </label>
-             <input
-                type="text"
-                name="role_id"
-                value={editingDepartment?editingDepartment:""}
-                readOnly
-                className="w-full p-2 mb-3 border border-gray-300 rounded cursor-not-allowed bg-gray-100"
-              />
+            {editingId && (
+              <>
+                <label className="block text-sm font-small mb-1">
+                  Department <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="role_id"
+                  value={editingDepartment ? editingDepartment : ""}
+                  readOnly
+                  className="w-full p-2 mb-3 border border-gray-300 rounded cursor-not-allowed bg-gray-100"
+                />
               </>
             )}
-             {!editingId && (<>
-              <label className="block text-sm font-small mb-1">
+            {!editingId && (
+              <>
+                <label className="block text-sm font-small mb-1">
                   Select Department <span className="text-red-500">*</span>
-               </label>
-              <select
-                value={selectedDepartment || ""}
-                onChange={handleDepartmentChange}
-                className="w-full p-2 mb-3 border border-gray-300 rounded"
-                required
-              >
-                <option value="">Select Department</option>
-                {departments.map((dept) => (
-                  <option key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
+                </label>
+                <select
+                  value={selectedDepartment || ""}
+                  onChange={handleDepartmentChange}
+                  className="w-full p-2 mb-3 border border-gray-300 rounded"
+                  required
+                >
+                  <option value="">Select Department</option>
+                  {departments.map((dept) => (
+                    <option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
               </>
             )}
             <label className="block text-sm font-small mb-1">
-            Role Code <span className="text-red-500">*</span>
-               </label>
+              Role Code <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               name="role_code"
-            
               value={formData.role_code}
               onChange={handleInputChange}
-              className={`w-full p-2 mb-3 border border-gray-300 rounded ${editingId ? 'bg-gray-100 cursor-not-allowed' : 'bg-white text-black'}`}
+              className={`w-full p-2 mb-3 border border-gray-300 rounded ${
+                editingId
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : "bg-white text-black"
+              }`}
               disabled={!!editingId}
             />
             <label className="block text-sm font-small mb-1">
-            Role Name <span className="text-red-500">*</span>
-               </label>
+              Role Name <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               name="role_name"
@@ -299,18 +307,22 @@ const RoleManagement: React.FC = () => {
               onChange={handleInputChange}
               className="w-full p-2 mb-3 border border-gray-300 rounded"
             />
-             <label className="block text-sm font-small mb-1">
-            Role Category <span className="text-red-500">*</span>
-               </label>
-            <input
-              type="text"
-              name="role_category"
-              value={formData.role_category}
+            <label className="block text-sm font-small mb-1">
+              Role Category <span className="text-red-500">*</span>
+            </label>
+         
+            <select
+                name="role_category"
+                value={formData.role_category}
               onChange={handleInputChange}
-              className="w-full p-2 mb-3 border border-gray-300 rounded"
-            />
+              className="w-full px-4 py-2 mb-3 border border-gray-300 rounded-md"
+            >
+              <option value="">Select Category</option>
+              <option value="Functional">Functional</option>
+              <option value="Behavioral">Managerial</option>
+              <option value="Stratergic">Stratergic</option>
 
-           
+            </select>
 
             <div className="flex justify-end space-x-3">
               <button

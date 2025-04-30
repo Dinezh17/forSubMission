@@ -269,7 +269,7 @@ const EmployeeManagement: React.FC = () => {
   };
 
   const handleDelete = async (employeeNumber: string) => {
-    if (window.confirm("Are you sure you want to delete this employee?")) {
+    if (window.confirm("Confirm deletion")) {
       try {
         await api.delete(`/employees/${employeeNumber}`);
         toast.warn("successfully deleted employee");
@@ -471,7 +471,7 @@ const EmployeeManagement: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-small mb-1">
-                Job Code <span className="text-red-500">*</span>
+                Job Code with Name<span className="text-red-500">*</span>
               </label>
               <select
                 name="jobCode"
@@ -574,15 +574,9 @@ const EmployeeManagement: React.FC = () => {
               <th className="p-3 border-b border-gray-200 font-medium">
                 Employee Number
               </th>
-              <th className="p-3 font-medium border-b border-gray-200">Name</th>
               <th className="p-3 font-medium border-b border-gray-200">
-                Job Code
-              </th>
-              <th className="p-3 font-medium border-b border-gray-200">
-                Job Name
-              </th>
-              <th className="p-3 font-medium border-b border-gray-200">
-                Reporting To
+                {" "}
+                Employee Name
               </th>
               <th className="p-3 font-medium border-b border-gray-200">
                 Department
@@ -592,6 +586,18 @@ const EmployeeManagement: React.FC = () => {
               </th>
               <th className="p-3 font-medium border-b border-gray-200">
                 Role Name
+              </th>
+              <th className="p-3 font-medium border-b border-gray-200">
+                Role Category
+              </th>
+              <th className="p-3 font-medium border-b border-gray-200">
+                Job Code
+              </th>
+              <th className="p-3 font-medium border-b border-gray-200">
+                Job Name
+              </th>
+              <th className="p-3 font-medium border-b border-gray-200">
+                Reporting To
               </th>
 
               <th className="p-3 font-medium border-b border-gray-200 text-center">
@@ -620,15 +626,6 @@ const EmployeeManagement: React.FC = () => {
                     {employee.employee_name}
                   </td>
                   <td className="p-3 border-t border-gray-100">
-                    {employee.job_code}
-                  </td>
-                  <td className="p-3 border-t border-gray-100">
-                    {employee.job_name}
-                  </td>
-                  <td className="p-3 border-t border-gray-100">
-                    {manager?.employee_name || "-"}
-                  </td>
-                  <td className="p-3 border-t border-gray-100">
                     {department?.name || "-"}
                   </td>
                   <td className="p-3 border-t border-gray-100">
@@ -637,6 +634,19 @@ const EmployeeManagement: React.FC = () => {
                   <td className="p-3 border-t border-gray-100">
                     {role?.role_name || "-"}
                   </td>
+                  <td className="p-3 border-t border-gray-100">
+                    {role?.role_category || "-"}
+                  </td>
+                  <td className="p-3 border-t border-gray-100">
+                    {employee.job_code}
+                  </td>
+                  <td className="p-3 border-t border-gray-100">
+                    {employee.job_name}
+                  </td>
+                  <td className="p-3 border-t border-gray-100">
+                    {manager?.employee_name || "-"}
+                  </td>
+
                   <td className="p-3 border-t border-gray-100">
                     <div className="flex flex-wrap gap-2 justify-center">
                       <button

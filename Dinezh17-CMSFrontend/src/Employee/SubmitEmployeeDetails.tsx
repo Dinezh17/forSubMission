@@ -16,6 +16,8 @@ interface Employee {
   sent_to_evaluation_by?: string;
   evaluation_by?: string;
   last_evaluated_date?: string;
+
+  role_category: string;
 }
 
 interface CompetencyDisplay {
@@ -79,7 +81,7 @@ const EmployeeEvaluationHod: React.FC = () => {
 
   const handleScoreChange = (code: string, value: string) => {
     // Allow empty string or numbers 0-4
-    if (value === "" || (["0", "1", "2", "3", "4"].includes(value))) {
+    if (value === "" || ["0", "1", "2", "3", "4"].includes(value)) {
       setTempScores((prev) => ({
         ...prev,
         [code]: value,
@@ -91,7 +93,9 @@ const EmployeeEvaluationHod: React.FC = () => {
     if (!employee) return;
 
     // Check if any values are empty strings
-    const hasEmptyScores = Object.values(tempScores).some(score => score === "");
+    const hasEmptyScores = Object.values(tempScores).some(
+      (score) => score === ""
+    );
     if (hasEmptyScores) {
       toast.error("Please enter a score (0-4) for all competencies");
       return;
@@ -113,7 +117,6 @@ const EmployeeEvaluationHod: React.FC = () => {
         window.location.reload();
       }
       toast.success("Employee scores updated");
-      
     } catch (error) {
       console.error("Error submitting evaluation:", error);
       toast.error("Failed to submit evaluation. Please try again.");
@@ -130,29 +133,49 @@ const EmployeeEvaluationHod: React.FC = () => {
     title: string
   ) => (
     <div className="py-4 mb-7">
-
       <h3 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
         {title} Competencies
       </h3>
       <div className="overflow-x-auto border border-gray-300 rounded-xl">
-        <table className="w-full border-collapse border border-gray-300 text-sm rounded-xl overflow-hidden">
+        <table className="w-full table-fixed border-collapse border border-gray-300 text-sm rounded-xl overflow-hidden">
           <thead>
             <tr className="bg-gray-50">
-              <th className="p-3 text-left border border-gray-300 text-gray-600 font-semibold">Code</th>
-              <th className="p-3 text-left border border-gray-300 text-gray-600 font-semibold">Name</th>
-              <th className="p-3 text-left border border-gray-300 text-gray-600 font-semibold">Description</th>
-              <th className="p-3 text-left border border-gray-300 text-gray-600 font-semibold">Required</th>
-              <th className="p-3 text-left border border-gray-300 text-gray-600 font-semibold">Actual</th>
-              <th className="p-3 text-left border border-gray-300 text-gray-600 font-semibold">Gap</th>
+              <th className="w-1/10 p-3 text-left border border-gray-300 text-gray-600 font-semibold">
+                Classification
+              </th>
+              <th className="w-1/5 p-3 text-left border border-gray-300 text-gray-600 font-semibold">
+                Competency
+              </th>
+              <th className="w-1/12 p-3 text-left border border-gray-300 text-gray-600 font-semibold">
+              Competency Code
+              </th>
+              <th className="w-1/14 p-3 text-left border border-gray-300 text-gray-600 font-semibold">
+                RPL
+              </th>
+              <th className="w-1/14 p-3 text-left border border-gray-300 text-gray-600 font-semibold">
+                APL
+              </th>
+              <th className="w-1/14 p-3 text-left border border-gray-300 text-gray-600 font-semibold">
+                Gap
+              </th>
             </tr>
           </thead>
           <tbody>
             {competencies.map((comp) => (
               <tr key={comp.competency_code}>
-                <td className="p-4 border border-gray-300 align-top text-base">{comp.competency_code}</td>
-                <td className="p-4 border border-gray-300 align-top text-base">{comp.competency_name}</td>
-                <td className="p-4 border border-gray-300 align-top text-base">{comp.competency_description}</td>
-                <td className="p-4 border border-gray-300 align-top text-base">{comp.required_score}</td>
+                  <td className="p-4 border border-gray-300 align-top text-base">
+                  {comp.competency_description}
+                </td>
+                
+                <td className="p-4 border border-gray-300 align-top text-base">
+                  {comp.competency_name}
+                </td>
+                <td className="p-4 border border-gray-300 align-top text-base">
+                  {comp.competency_code}
+                </td>
+                <td className="p-4 border border-gray-300 align-top text-base">
+                  {comp.required_score}
+                </td>
                 <td className="p-4 border border-gray-300 align-top text-base">
                   {editingScores ? (
                     <input
@@ -167,9 +190,11 @@ const EmployeeEvaluationHod: React.FC = () => {
                     comp.actual_score
                   )}
                 </td>
-                <td className={`p-4 border border-gray-300 align-top text-base font-bold ${
-                  comp.gap <= 0 ? "text-green-600" : "text-red-600"
-                }`}>
+                <td
+                  className={`p-4 border border-gray-300 align-top text-base font-bold ${
+                    comp.gap <= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
                   {comp.gap}
                 </td>
               </tr>
@@ -184,7 +209,9 @@ const EmployeeEvaluationHod: React.FC = () => {
     return (
       <div className="max-w-7xl mx-auto my-5 p-6 font-sans text-black bg-gray-50 rounded-xl shadow-sm">
         <div className="flex justify-center items-center h-72">
-          <div className="text-lg text-gray-600">Loading employee details...</div>
+          <div className="text-lg text-gray-600">
+            Loading employee details...
+          </div>
         </div>
       </div>
     );
@@ -195,7 +222,7 @@ const EmployeeEvaluationHod: React.FC = () => {
       <div className="max-w-7xl mx-auto my-5 p-6 font-sans text-black bg-gray-50 rounded-xl shadow-sm">
         <div className="text-center py-10">
           <h3>Employee not found</h3>
-          <button 
+          <button
             className="mt-4 px-4 py-2 bg-gray-100 text-gray-600 border-none rounded-lg text-sm font-semibold cursor-pointer transition duration-200 flex items-center gap-1.5 shadow-sm hover:bg-gray-200"
             onClick={handleBack}
           >
@@ -209,11 +236,12 @@ const EmployeeEvaluationHod: React.FC = () => {
   return (
     <div className="max-w-8xl mx-auto mt-20 mb-5 p-6 font-sans text-black bg-gray-50 rounded-xl shadow-sm">
       <ToastContainer position="top-right" />
-      
+
       <div className="flex items-center justify-between mb-7 gap-4">
-        
-        <h2 className="text-2xl font-semibold text-blue-900 m-0">Employee Evaluation</h2>
-        <button 
+        <h2 className="text-2xl font-semibold text-blue-900 m-0">
+          Employee Evaluation
+        </h2>
+        <button
           className="px-4 py-2 bg-gray-100 text-gray-600 border-none rounded-lg text-sm font-semibold cursor-pointer transition duration-200 flex items-center gap-1.5 shadow-sm hover:bg-gray-200"
           onClick={handleBack}
         >
@@ -228,31 +256,52 @@ const EmployeeEvaluationHod: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-5">
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Employee Number:</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Employee Number:
+              </span>
               <span>{employee.employee_number}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Name:</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Employee Name:
+              </span>
               <span>{employee.employee_name}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Job Name:</span>
-              <span>{employee.job_name}</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Department:
+              </span>
+              <span>{employee.department}</span>
             </div>
-
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Job Code:</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Role Code:
+              </span>
+              <span>{employee.role_code}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Role Name:
+              </span>
+              <span>{employee.role}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Role Category:
+              </span>
+              <span>{employee.role_category}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-gray-500 font-medium">
+                Job Code:
+              </span>
               <span>{employee.job_code}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Reporting To:</span>
-              <span>{employee.reporting_employee_name || "N/A"}</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Role:</span>
-              <span>
-                {employee.role} ({employee.role_code})
+              <span className="text-sm text-gray-500 font-medium">
+                Job Name:
               </span>
+              <span>{employee.job_name}</span>
             </div>
           </div>
         </div>
@@ -263,7 +312,9 @@ const EmployeeEvaluationHod: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500  font-medium">Status:</span>
+              <span className="text-sm text-gray-500  font-medium">
+                Status:
+              </span>
               <span
                 className={`${
                   employee.evaluation_status === null
@@ -281,19 +332,24 @@ const EmployeeEvaluationHod: React.FC = () => {
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Sent to Evaluation By:</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Sent to Evaluation By:
+              </span>
               <span>{employee.sent_to_evaluation_by || "N/A"}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Evaluated By:</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Evaluated By:
+              </span>
               <span>{employee.evaluation_by || "N/A"}</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-gray-500 font-medium">Last Evaluated:</span>
+              <span className="text-sm text-gray-500 font-medium">
+                Last Evaluated:
+              </span>
               <span>{formatDate(employee.last_evaluated_date)}</span>
             </div>
           </div>
-         
         </div>
 
         {renderCompetencyTable(functionalCompetencies, "Functional")}
@@ -324,7 +380,7 @@ const EmployeeEvaluationHod: React.FC = () => {
             </button>
           ) : (
             <>
-              <button 
+              <button
                 className="px-5 py-2.5 bg-green-600 text-white border-none rounded-lg text-sm font-medium cursor-pointer hover:bg-green-700 transition-colors"
                 onClick={submitEvaluation}
               >

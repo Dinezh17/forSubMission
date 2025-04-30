@@ -79,7 +79,7 @@ const DepartmentManagement: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm("Delete this department?")) {
+    if (window.confirm("Confirm deletion")) {
       try {
         await api.delete(`/departments/${id}`);
         toast.warn("Department deleted successfully");
@@ -198,12 +198,11 @@ const DepartmentManagement: React.FC = () => {
         
 
             <label className="block text-sm font-small mb-1">
-              Name <span className="text-red-500">*</span>
+              Department Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="name"
-              placeholder="Department name"
               value={formData.name}
               onChange={handleInputChange}
               className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md"

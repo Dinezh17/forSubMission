@@ -55,14 +55,13 @@ const CompetencyManagement: React.FC = () => {
     try {
       if (editingId) {
         await api.put(`/competency/${editingId}`, formData);
-        toast.info("Competency updated successfully")
+        toast.info("Competency updated successfully");
 
         fetchCompetencies();
       } else {
         await api.post("/competency", formData);
         fetchCompetencies();
-        toast.success("Competency created successfully")
-
+        toast.success("Competency created successfully");
       }
       closeModal();
     } catch (error: any) {
@@ -73,13 +72,13 @@ const CompetencyManagement: React.FC = () => {
   };
 
   const handleDelete = async (code: string) => {
-    if (window.confirm("Delete this competency?")) {
+    if (window.confirm("Confirm deletion")) {
       try {
         await api.delete(`/competency/${code}`);
-        toast.warn("Competency deleted successfully")
+        toast.warn("Competency deleted successfully");
         fetchCompetencies();
       } catch (error: any) {
-        toast.error("Failed " + "  " + error?.response?.data?.detail || "error");
+        toast.error("Failed " + "  " + error?.response?.data?.detail);
 
         console.error("Error deleting competency:", error);
       }
@@ -125,7 +124,9 @@ const CompetencyManagement: React.FC = () => {
       <ToastContainer position="top-right" />
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Competency Management</h2>
+        <h2 className="text-2xl font-semibold">
+          Competency Management (library)
+        </h2>
         <button
           className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
           onClick={() => openModal()}
@@ -137,9 +138,15 @@ const CompetencyManagement: React.FC = () => {
         <table className="w-full border border-gray-200 rounded-md shadow-sm">
           <thead className="bg-gray-100">
             <tr>
-              <th className="p-3 border-b border-gray-200 font-medium text-left">Code</th>
-              <th className="p-3 border-b border-gray-200 text-left font-medium">Name</th>
-              <th className="p-3 border-b border-gray-200 text-left font-medium">Type</th>
+              <th className="p-3 border-b border-gray-200 font-medium text-left">
+                Classification
+              </th>
+              <th className="p-3 border-b border-gray-200 text-left font-medium">
+                Competency
+              </th>
+              <th className="p-3 border-b border-gray-200 text-left font-medium">
+                Competency Code
+              </th>
               <th className="p-3 border-b border-gray-200 text-left font-medium">
                 Actions
               </th>
@@ -152,13 +159,13 @@ const CompetencyManagement: React.FC = () => {
                 className="hover:bg-blue-100"
               >
                 <td className="p-3 border-t border-gray-100 whitespace-nowrap">
-                  {competency.competency_code}
+                  {competency.competency_description}
                 </td>
                 <td className="p-3 border-t border-gray-100 max-w-xs break-words">
                   {competency.competency_name}
                 </td>
                 <td className="p-3 border-t border-gray-100">
-                  {competency.competency_description || "-"}
+                  {competency.competency_code}
                 </td>
                 <td className="p-3 border-t border-gray-100 space-x-2">
                   <button
@@ -199,10 +206,12 @@ const CompetencyManagement: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">
               {editingId ? "Edit Competency" : "Add Competency"}
             </h3>
+            <label className="block text-sm font-small mb-1">
+              Competency Code <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               name="competency_code"
-              placeholder="Competency code"
               value={formData.competency_code}
               onChange={handleInputChange}
               className={`w-full px-4 py-2 mb-3 border border-gray-300 rounded-md ${
@@ -210,21 +219,26 @@ const CompetencyManagement: React.FC = () => {
               }`}
               readOnly={!!editingId}
             />
+            <label className="block text-sm font-small mb-1">
+              Competency Name <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               name="competency_name"
-              placeholder="Competency name"
               value={formData.competency_name}
               onChange={handleInputChange}
               className="w-full px-4 py-2 mb-3 border border-gray-300 rounded-md"
             />
+            <label className="block text-sm font-small mb-1">
+              Competency Classification <span className="text-red-500">*</span>
+            </label>
             <select
               name="competency_description"
               value={formData.competency_description}
               onChange={handleInputChange}
               className="w-full px-4 py-2 mb-3 border border-gray-300 rounded-md"
             >
-              <option value="">Select Type</option>
+              <option value="">Select Classification</option>
               <option value="Functional">Functional</option>
               <option value="Behavioral">Behavioral</option>
             </select>
