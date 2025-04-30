@@ -459,7 +459,7 @@ const EmployeeManagement: React.FC = () => {
                 <option value="">Select Role</option>
                 {departmentRoles.map((role) => (
                   <option key={role.id} value={role.id}>
-                    {role.role_name}
+                    {role.role_code}-{role.role_name} 
                   </option>
                 ))}
               </select>
@@ -597,7 +597,7 @@ const EmployeeManagement: React.FC = () => {
                 Job Name
               </th>
               <th className="p-3 font-medium border-b border-gray-200">
-                Reporting To
+                Reporting Manager
               </th>
 
               <th className="p-3 font-medium border-b border-gray-200 text-center">
