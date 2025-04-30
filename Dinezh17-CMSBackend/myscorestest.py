@@ -101,6 +101,8 @@ def get_employee_details(db: Session = Depends(get_db),current_user: dict = Depe
             "department": department.name if department else None,
             "role": role.role_name if role else None,
             "role_code": role.role_code if role else None,
+            "role_category":role.role_category,
+
             "evaluation_status": employee.evaluation_status,
             "sent_to_evaluation_by": employee.sent_to_evaluation_by,
             "evaluation_by": employee.evaluation_by,

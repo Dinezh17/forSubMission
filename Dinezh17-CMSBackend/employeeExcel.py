@@ -169,17 +169,17 @@ def check_competency_exists(db: Session, competency_code: str) -> Competency:
     """Check if a competency exists by competency_code."""
     return db.query(Competency).filter(Competency.competency_code == competency_code).first()
 
-def ensure_department_role_link(db: Session, department_id: int, role_id: int) -> None:
-    """Ensure there's a link between department and role."""
-    link = db.query(DepartmentRole).filter(
-        DepartmentRole.department_id == department_id,
-        DepartmentRole.role_id == role_id
-    ).first()
+# def ensure_department_role_link(db: Session, department_id: int, role_id: int) -> None:
+#     """Ensure there's a link between department and role."""
+#     link = db.query(DepartmentRole).filter(
+#         DepartmentRole.department_id == department_id,
+#         DepartmentRole.role_id == role_id
+#     ).first()
     
-    if not link:
-        link = DepartmentRole(department_id=department_id, role_id=role_id)
-        db.add(link)
-        db.commit()
+#     if not link:
+#         link = DepartmentRole(department_id=department_id, role_id=role_id)
+#         db.add(link)
+#         db.commit()
 
 
 
@@ -224,6 +224,8 @@ def process_employee_data(db: Session, employee_data: dict) -> dict:
         result["status"] = "failed"
         result["failure_reason"] = f"Job code '{job_code}' is already assigned to another employee"
         return result
+
+
 
     for comp_data in employee_data["Competencies"]:
         competency = check_competency_exists(db, comp_data["Code"])
@@ -284,7 +286,7 @@ def create_or_update_employee(db: Session, employee_data: dict, department: Depa
            
     
     # Ensure department-role link if both entities exist
-    ensure_department_role_link(db, department.id, role.id)
+    # ensure_department_role_link(db, department.id, role.id)
     
     if not employee:
         # Create new employee

@@ -4,7 +4,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
-from models import Employee, Role, RoleJob
+from models import Department, DepartmentRole, Employee, Role, RoleJob
 from schemas import CreateJobsRequest, JobCodeResponse, JobDeleteRequest
 from sqlalchemy import func, desc
 
@@ -28,23 +28,38 @@ def create_jobs(request: CreateJobsRequest, db: Session = Depends(get_db)):
 
 @router.get("/jobs-summary")
 def get_jobs_summary(db: Session = Depends(get_db)):
-    # Query to count number of jobs for each job_name and get the max job_code for each group
     jobs = (
         db.query(
-            RoleJob.job_name,Role.role_code,Role.role_name,
+            Department.name.label("department_name"),
+            Role.role_code,
+            Role.role_name,
+            Role.role_category,
+            RoleJob.job_name,
             func.count(RoleJob.job_code).label("count"),
             func.max(RoleJob.job_code).label("LastCode")
-        ).filter(RoleJob.job_code!="dummy100").join(Role,Role.role_code==RoleJob.role_code)
-        .group_by(RoleJob.job_name)
+        )
+        .join(Role, Role.role_code == RoleJob.role_code)
+        .join(DepartmentRole, DepartmentRole.role_id == Role.id)
+        .join(Department, Department.id == DepartmentRole.department_id)
+        .filter(RoleJob.job_code != "dummy100")
+        .group_by(
+            Department.name,
+            Role.role_code,
+            Role.role_name,
+            Role.role_category,
+            RoleJob.job_name
+        )
         .order_by(desc("count"))
         .all()
     )
 
-    # Format and return the result as a list of dictionaries
     return {
         "jobs_by_name": [
-            {   "role_name":job.role_name,
-               "role_code":job.role_code,
+            {
+                "department_name": job.department_name,
+                "role_name": job.role_name,
+                "role_code": job.role_code,
+                "role_category": job.role_category,
                 "job_name": job.job_name,
                 "count": job.count,
                 "LastCode": job.LastCode
@@ -52,6 +67,7 @@ def get_jobs_summary(db: Session = Depends(get_db)):
             for job in jobs
         ]
     }
+
 
 @router.get("/available-job-codes/{role_code}", response_model=List[JobCodeResponse])
 def get_available_job_codes(role_code: str , employee_number: str = Query(...), db: Session = Depends(get_db)):
@@ -73,17 +89,15 @@ def get_available_job_codes(role_code: str , employee_number: str = Query(...), 
         job_name = job_name_tuple[0]
         
         # Find first available job code for this job name
-        first_available = db.query(RoleJob)\
+        available = db.query(RoleJob)\
                             .filter(
                                 RoleJob.role_code == role_code,
                                 RoleJob.job_name == job_name,
                                 ~RoleJob.job_code.in_(assigned_job_codes),
                                 RoleJob.job_status==True
-                            )\
-                            .order_by(RoleJob.job_code)\
-                            .first()
+                            ).all()
         
-        if first_available:
+        for first_available in available:
             result.append({
                 "job_code": first_available.job_code,
                 "job_name": first_available.job_name
@@ -124,7 +138,7 @@ async def delete_jobs(delete_request: JobDeleteRequest, db: Session = Depends(ge
         used_codes = list({emp.job_code for emp in existing_employees})
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot delete. These job codes are assigned to employees: {used_codes}"
+            detail=f" to delete Job  Employees still Assigned to this Job"
         )
 
     # Safe to delete

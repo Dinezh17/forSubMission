@@ -106,13 +106,13 @@ def delete_department(department_id: int, db: Session = Depends(get_db),
     if employees_in_dept:
         raise HTTPException(
             status_code=400,
-            detail="Cannot delete department Employees are still Assigned to this departments"
+            detail="to delete department Employees are still Assigned to this departments"
         )
     role = db.query(DepartmentRole).filter(DepartmentRole.department_id==department_id).first()
     if role:
         raise HTTPException(
             status_code=400,
-            detail="Cannot delete department role are still Assigned to this departments"
+            detail="to delete department role are still Assigned to this departments"
         )
     db.delete(department)
     db.commit()

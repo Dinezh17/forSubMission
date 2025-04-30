@@ -7,7 +7,7 @@
 -- UPDATE users set role = "HR" WHERE employee_number ="test102";
 
 -- delete from employees where role_id="104"
-UPDATE users set role = "Manager" 
+UPDATE users set role = "HR" where employee_number ="Test102"
 -- INSERT into role_job values("dummy100","dummy","dummy",True)
 -- UPDATE role_job  SET role_code = "dummy" WHERE job_code = "dummy100"
 

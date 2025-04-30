@@ -108,7 +108,7 @@ def delete_competency(
     if employees_in_competency:
         raise HTTPException(
             status_code=400,
-            detail="Cannot delete competency. Employees are still assigned to this competency."
+            detail="to delete competency. This compentency is assigned to Employees."
         )
     
     db.delete(competency)
