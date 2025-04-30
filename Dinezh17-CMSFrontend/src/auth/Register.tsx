@@ -35,7 +35,7 @@ const ChangeCredentials: React.FC = () => {
       <ToastContainer position="top-right" />
       <div className="w-full max-w-md p-6 bg-white shadow-md rounded-xl">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-          Change Email / Password
+          Change Password
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
