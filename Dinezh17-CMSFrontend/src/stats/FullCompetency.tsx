@@ -52,7 +52,7 @@ const EmployeeCompetencyTable: React.FC = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto mt-20 px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-6">Employee Competencies</h2>
+      <h2 className="text-2xl font-semibold mb-6">Employee Competencies Report</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
           <thead className="bg-gray-100">

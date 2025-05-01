@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import api from "../interceptor/api";
 
 import { toast, ToastContainer } from "react-toastify";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const ChangeCredentials: React.FC = () => {
   const [loading, setLoading] = useState(false);
-
+  const nav = useNavigate();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -20,6 +21,11 @@ const ChangeCredentials: React.FC = () => {
     setLoading(true);
     try {
       const response = await api.post("/reset-password-or-email/", formData);
+      if (response) {
+        setTimeout(() => {
+          nav("/login");
+        }, 1000);
+      }
       toast.success(response.data.message || "Update successful");
     } catch (error: any) {
       toast.error(

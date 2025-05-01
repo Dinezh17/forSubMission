@@ -593,33 +593,7 @@ const Navbar: React.FC = () => {
             </Link>
           </>
 
-          {/* Logout Option */}
-          <button
-            style={{
-              ...sidebarLinkStyle,
-              background: "none",
-              border: "none",
-              textAlign: "left",
-              width: "100%",
-              cursor: "pointer",
-              color: theme.text,
-            }}
-            onClick={() => {
-              logout();
-              navigate("/");
-              setMenuOpen(false);
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = theme.secondary;
-              e.currentTarget.style.color = theme.accent;
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = theme.text;
-            }}
-          >
-            Logout
-          </button>
+   
         </div>
       )}
 
